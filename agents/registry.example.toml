@@ -1,0 +1,15 @@
+# Copy these role declarations into the Codex config.toml that owns the deployment.
+# Relative config_file paths resolve from that config.toml.
+# This example assumes the role files are deployed under ./agents/.
+
+[agents.scout]
+description = "Read-only repository and document scout. Returns source-backed evidence without implementation."
+config_file = "./agents/scout.toml"
+
+[agents.implementer]
+description = "Bounded code implementer. Changes only the prepared implementation scope; validation is external."
+config_file = "./agents/implementer.toml"
+
+[agents.tester]
+description = "External validation executor. Runs requested checks and reports reproducible evidence without repairing failures."
+config_file = "./agents/tester.toml"
