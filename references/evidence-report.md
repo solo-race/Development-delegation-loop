@@ -1,44 +1,28 @@
 # Evidence Report
 
-Use this template for scout and test-executor returns. Report observations separately from inference.
+Scout and test returns use the same compact evidence shape.
 
 ```text
 EVIDENCE_REPORT
 
-unit_id:
+unit:
 role: SCOUT | TEST_EXECUTOR
 status: COMPLETE | PARTIAL | BLOCKED
 
-observed_facts:
-- source: <path[:symbol/line] | command | artifact>
-  fact: <directly observed result>
+observed:
+- <path/symbol | command | artifact> -> <fact/result>
 
-inferences:
-- inference: <derived conclusion>
-  based_on:
-    - <source/fact>
-  confidence: high | medium | low
+inference:
+- <optional; keep separate from observed facts>
 
 validation:
-- command: <exact command, if applicable>
-  exit_status: <code or n/a>
+- command: <exact command or n/a>
+  exit: <code or n/a>
   result: PASS | FAIL | NOT_RUN
-  relevant_output: <minimal decisive output>
+  decisive_output: <minimal output>
 
-environment_constraints:
-- <constraint or none>
-
-unresolved_questions:
-- <question or none>
-
-scope_notes:
-- <anything required outside delegated scope; do not act on it>
+blockers_or_scope_notes:
+- <none or issue outside delegated scope>
 ```
 
-Rules:
-
-- Never report an inference as an observed fact.
-- Prefer file paths, symbols, commands, exit codes, and artifact IDs over prose.
-- A scout does not modify files.
-- A test executor does not repair failures.
-- If evidence became stale because repository state changed, return `PARTIAL` or `BLOCKED` and identify the stale assumption.
+Use exact sources and reproducible checks. Scouts do not edit; test executors do not repair failures.
