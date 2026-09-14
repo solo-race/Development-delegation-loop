@@ -1,52 +1,31 @@
 # Implementation Brief
 
-Use this template for the handoff from the main supervisor to the implementation worker. Keep it bounded and evidence-backed.
+Pass only the information needed for this acceptance unit. Stable rules live in `SKILL.md`.
 
 ```text
 IMPLEMENTATION_BRIEF
 
-unit_id:
-phase:
-status: READY_TO_IMPLEMENT
-
+unit:
 goal:
-- <single bounded implementation goal>
 
-acceptance_contract:
-- <criterion 1>
-- <criterion 2>
+acceptance:
+- <criterion>
 
-allowed_scope:
-- <file/path/symbol allowed to change>
+scope:
+- allowed: <path/symbol>
+- forbidden: <path/module/behavior, if material>
 
-forbidden_scope:
-- <files/modules/behaviors that must not change>
-
-relevant_evidence:
-- source: <path[:symbol/line]>
-  fact: <observed fact>
-- source: <path[:symbol/line]>
-  fact: <observed fact>
+facts:
+- <source> -> <observed fact>
 
 constraints:
-- <API/backward-compat/security/project constraint>
+- <unit-specific constraint, if any>
 
-known_risks:
-- <risk or none>
+validate:
+- <exact external check>
 
-validation_to_be_run_externally:
-- <exact test/build/runtime check>
-
-required_return:
+return:
 - changed files
-- concise implementation rationale
-- unresolved concerns
-- BLOCKED plus reason if the brief is insufficient
-
-worker_rules:
-- Modify only allowed scope.
-- Do not broaden repository discovery.
-- Do not redesign the contract.
-- Do not claim tests passed; tests are executed externally.
-- If an out-of-scope change is required, stop and return BLOCKED.
+- concise rationale
+- unresolved concern or BLOCKED reason
 ```
