@@ -22,6 +22,7 @@ load skill
 ## Structure
 
 - `SKILL.md` — entry contract, session gate, routing rules, shared roles and states.
+- `AGENTS.md` — repository-wide editing constraints and basic file index for contributors and coding agents.
 - `loops/planning.md` — project-plan bootstrap and current-phase planning loop.
 - `loops/implementation.md` — bounded implementation, validation, retry, and phase-close flow.
 - `modules/review.md` — reusable independent review protocol for unattended execution.
