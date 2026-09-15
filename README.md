@@ -1,35 +1,41 @@
 # Development Delegation Loop
 
-Lean orchestration skill for executing an existing repository phase plan with strict role separation.
+Repository-scale orchestration skill with two explicit workflows: planning and implementation. A session-level supervision gate decides whether implementation is directly supervised by a human or must pass independent review before each phase advances.
 
 ```text
-upstream plan/review
-        ↓
-main supervisor
-  ├─ scouts: inspect only
-  ├─ implementer: bounded code only
-  └─ test executor: evidence only
-        ↓
-mechanical acceptance + persisted state
-        ↓
-upstream final review
+load skill
+   |
+   +-- ask supervision gate once
+   |
+   +-- plan gate
+       |
+       +-- no detailed current-phase plan / explicit plan request
+       |      -> planning loop -> optional unattended review -> sealed phase plan
+       |
+       +-- usable detailed phase plan
+              -> implementation loop
+                    |
+                    +-- human supervisor -> mechanical acceptance -> advance
+                    +-- unattended -> phase review -> revise/revalidate until PASS
 ```
 
-The supervisor loads `SKILL.md` once. Workers receive only the relevant contract fragment and a compact template from `references/`.
+## Structure
 
-## Files
+- `SKILL.md` — entry contract, session gate, routing rules, shared roles and states.
+- `loops/planning.md` — project-plan bootstrap and current-phase planning loop.
+- `loops/implementation.md` — bounded implementation, validation, retry, and phase-close flow.
+- `modules/review.md` — reusable independent review protocol for unattended execution.
+- `agents/` — example Codex role profiles; runtime/provider selection remains deployment policy.
+- `references/` — compact handoff schemas used between supervisor and workers.
 
-- `SKILL.md` — stable execution contract, role boundaries, loop, gates, and states.
-- `agents/scout.toml` — read-only, low-cost evidence worker.
-- `agents/implementer.toml` — bounded high-capability code writer.
-- `agents/tester.toml` — external validation worker; build/test side effects allowed, source edits forbidden by role contract.
-- `agents/registry.example.toml` — role declarations to copy into the deployment `config.toml`.
-- `references/implementation-brief.md` — bounded code handoff.
-- `references/evidence-report.md` — scout/test evidence return.
-- `references/final-review-package.md` — phase-close audit package.
+## Planning model
 
-The main supervisor is intentionally not defined as a subagent role, and there is no internal reviewer role: planning and final cross-phase review remain upstream.
+The supervisor and cheap scouts gather repository/document evidence first. The planner receives a source-backed planning packet rather than paying to rediscover the repository. When no project plan exists, planning first establishes the master objective and phase sequence, then materializes the current phase. When a master plan already exists, planning only expands or repairs the current phase unless the user explicitly requests broader replanning.
 
-## Design intent
+## Review model
 
-Stable workflow rules live in the skill; per-task prompts contain only the implementation delta. The skill is model- and harness-agnostic at the contract layer; `agents/` provides one Codex deployment profile matching the current cost/capability split and can be replaced without changing `SKILL.md`.
+Review is a supervision policy, not an implementation role. With a human supervisor present, automatic review stays off. Without one, each mechanically complete phase is independently audited from the contract, diff/change set, validation evidence, repository state, and prior findings. The reviewer does not inherit the implementer's reasoning history and does not edit code.
+
+## Deployment
+
+`agents/registry.example.toml` shows one role registry. `planner.toml` intentionally targets the high-reasoning planner profile; reviewer model/provider choice can be overridden by the runtime or OMP deployment without changing the skill contract.
